@@ -1,3 +1,4 @@
+const { now } = require('mongoose');
 const mongoose = require('../database/databaseMongo');
 
 const RegisterSchema = new mongoose.Schema({
@@ -11,7 +12,11 @@ const RegisterSchema = new mongoose.Schema({
     city: String,
     district: String,
     street: String,
-    cep: String,        
+    cep: String,     
+    createdAt:{
+        type: Date,
+        default: Date.now()
+    }
 
 }, {collection:'advClients'});
 
