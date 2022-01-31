@@ -1,19 +1,20 @@
 const mongoose = require('../database/databaseMongo');
 
 const RegisterSchema = new mongoose.Schema({
-    nome: String,
-    sobrenome: String,
-    data_nascimento: String,
-    cpf: Number,
-    rg: Number,
-    advogado: String,
-    processo: String,
-    rua: String,
-      
+    name: String,
+    lastName: String,
+    birth: String,
+    cpf: String,
+    rg: String,
+    adv: String,
+    process: String,
+    city: String,
+    district: String,
+    street: String,
+    cep: String,        
 
+}, {collection:'advClients'});
 
-}, {collection:''});
-
-const Register = mongoose.model('RegisterSchema', Register);
+const Register = mongoose.model('Register', RegisterSchema);
 
 module.exports = Register;
