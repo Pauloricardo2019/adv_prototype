@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require('../models/user');
 const advClients = require('../models/register');
 const { deleteOne } = require('../models/register');
+const { ObjectId } = require('mongodb');
 
 router.use(validationToken);
 
@@ -12,21 +13,34 @@ router.get('/', (req, res) => {
 });
 
 router.get('/register',async (req, res) => {
-    advClients.find({}).sort({"_id": -1}).exec(function(err, clients){
-        clients = clients.map(function(val){
-            return {
-                name: val.name,
-                lastName: val.name,
-                cpf: val.cpf
-            }
-        });
-        return res.status(200).send({clients:clients})
-    });
+    try{
+
+        const client = await advClients.find();
+        const clientName = client.map((client) => client.name +" "+ client.lastName +" "+ client.cpf);
+        res.status(200).json(clientName)
+
+    }catch(e){
+        return res.status(500).json({error: e})
+    }
 });
 
 router.get('/register/:id', async (req , res) => {
-        const id = req.params.id = advClients.findOne({});
-        console.log(id.name)
+        const id = req.params.id;
+
+        try {
+
+            const client = await advClients.findOne({ _id: id});
+
+            if(!await client){
+                
+                return res.status(422).json({message: "Usuario não encontrado"});
+            }
+
+            res.status(200).json(client);
+            
+        } catch (e) {
+            return res.status(500).json({error: e})
+        }
 }); 
 
 router.get('/regiter/new',async (req, res) => {
@@ -39,24 +53,41 @@ router.post('/register_new', async (req , res) => {
     const user = advClients.findOne({cpf,rg});
 
     if(await user)
-        return res.status(400).send('User already exist')
+        return res.status(400).send('Usuario não existe')
 
     try{
        const client = await advClients.create(req.body);
        
        return res.status(201).json(client);
     }catch(e){
-        console.log(e.message);
+        return res.status(500).json({error:e})
     }
 });
 
-router.put('/register/:id', async(req,res) => {
+router.patch('/register/:id', async(req,res) => {
 
-
+    const id = req.params.id;
+    
+    const user = req.body;
+    try {
+        const updateClient = await advClients.updateOne({ _id: id}, user)
+        
+        res.status(200).json(user)
+    } catch (e) {
+        return res.status(500).json({error:e})
+    }
 });
 
 router.delete('/register/:id', async(req,res) => {
-    const {id} = req.params;
+    const id = req.params.id;
+
+    try {
+        const client = await advClients.deleteOne({ _id: id});
+
+        res.status(200).json({message: "Deletado com sucesso"})
+    } catch (e) {
+        return res.status(500).json({error:e})
+    }
        
     
 
