@@ -12,12 +12,21 @@ router.get('/', (req, res) => {
 });
 
 router.get('/register',async (req, res) => {
-    res.send('Funcionando All')
+    advClients.find({}).sort({"_id": -1}).exec(function(err, clients){
+        clients = clients.map(function(val){
+            return {
+                name: val.name,
+                lastName: val.name,
+                cpf: val.cpf
+            }
+        });
+        return res.status(200).send({clients:clients})
+    });
 });
 
 router.get('/register/:id', async (req , res) => {
-        const {id} = req.params;
-        return res.status(200).send('funcionando')
+        const id = req.params.id = advClients.findOne({});
+        console.log(id.name)
 }); 
 
 router.get('/regiter/new',async (req, res) => {
@@ -33,13 +42,12 @@ router.post('/register_new', async (req , res) => {
         return res.status(400).send('User already exist')
 
     try{
-
        const client = await advClients.create(req.body);
-
+       
+       return res.status(201).json(client);
     }catch(e){
         console.log(e.message);
     }
-  return res.status(201).send('criado com sucesso \n')
 });
 
 router.put('/register/:id', async(req,res) => {
@@ -49,10 +57,7 @@ router.put('/register/:id', async(req,res) => {
 
 router.delete('/register/:id', async(req,res) => {
     const {id} = req.params;
-    const user = advClients.findOne({});
-    advClients.deleteOne();
-
-    res.send('deu certo')
+       
     
 
 
