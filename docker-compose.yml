@@ -1,0 +1,40 @@
+version: "2.2.3"
+
+services:
+  web:
+    container_name: api
+    build: 
+      context: .
+    restart: 
+       always
+    env_file:
+      - .env
+    volumes:
+      - .:/C:\projeto_advocacia/src/index
+      - /C:\projeto_advocacia/node_modules
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    command: npm run start
+
+services:
+  db:
+    image: mongo:latest
+    container_name: db
+    restart: always
+    env_file:
+      - .env
+    ports: 
+      - ${DB_PORT}:27017
+    volumes:
+      - /C:\projeto_advocacia/src/database/databaseMongo
+    environment:
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+
+   
+

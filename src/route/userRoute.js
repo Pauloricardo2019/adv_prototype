@@ -8,15 +8,19 @@ const { ObjectId } = require('mongodb');
 
 router.use(validationToken);
 
+
+//Rota principal
 router.get('/', (req, res) => {
     res.send({ ok:true, user: req.userId });
 });
 
+
+//Rota de Leitura de Registros
 router.get('/register',async (req, res) => {
     try{
 
         const client = await advClients.find();
-        const clientName = client.map((client) => client.name +" "+ client.lastName +" "+ client.cpf);
+        const clientName = client.map((client) =>client.name +" "+ client.lastName +" "+ client.cpf);
         res.status(200).json(clientName)
 
     }catch(e){
@@ -24,6 +28,8 @@ router.get('/register',async (req, res) => {
     }
 });
 
+
+//Rotas para Ler apenas um Registro
 router.get('/register/:id', async (req , res) => {
         const id = req.params.id;
 
@@ -43,17 +49,14 @@ router.get('/register/:id', async (req , res) => {
         }
 }); 
 
-router.get('/regiter/new',async (req, res) => {
-    res.send('formulario')
-});
-
-router.post('/register_new', async (req , res) => {
+//Rota para Criar novos Registros
+router.post('/register/new', async (req , res) => {
 
     const {cpf , rg} = req.body;
     const user = advClients.findOne({cpf,rg});
 
     if(await user)
-        return res.status(400).send('Usuario não existe')
+        return res.status(400).send('Usuario já existe')
 
     try{
        const client = await advClients.create(req.body);
@@ -64,6 +67,8 @@ router.post('/register_new', async (req , res) => {
     }
 });
 
+
+//Rota para Atualizar Registros
 router.patch('/register/:id', async(req,res) => {
 
     const id = req.params.id;
@@ -78,6 +83,8 @@ router.patch('/register/:id', async(req,res) => {
     }
 });
 
+
+//Rota para Deletar um Registro
 router.delete('/register/:id', async(req,res) => {
     const id = req.params.id;
 
